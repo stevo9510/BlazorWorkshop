@@ -1,0 +1,24 @@
+﻿@page "/"
+@using BlazorWorkshop.Data;
+Customers:
+<TestComponent Customers="Customers" CustomerSelectEvent="CustomerSelected"> </TestComponent>
+<br />
+<br />
+<span style="color:green;">@DisplayMessage</span>
+
+@code {
+
+    List<Customer> Customers = new List<Customer>();
+
+    string DisplayMessage = "";
+
+    private void CustomerSelected(Customer customer)
+    {
+        DisplayMessage = string.Format($"Event Raised. Customer Selected: {customer.Name}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Customers = await CustomerService.GetAllCustomersAsync();
+    }
+}

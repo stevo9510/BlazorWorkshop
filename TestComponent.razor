@@ -1,0 +1,12 @@
+﻿@inherits TestComponentCode
+<select @onchange="CustomerSelected" size="4" style="width:100%">
+    @foreach (var customer in @Customers)
+    {
+        <option value="@customer.CustomerId">@customer.Name</option>
+    }
+</select>
+
+@if (SelectedCustomer != null)
+{
+    <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />
+}
