@@ -3,7 +3,7 @@
     @foreach (var customer in @Customers)
     {
         string selected = customer.CustomerId == SelectedCustomer?.CustomerId ? "selected" : null;
-        <option selected="@selected" value="@customer.CustomerId" @selected>@customer.Name</option>
+        <option selected="@selected" value="@customer.CustomerId">@customer.Name</option>
     }
 </select>
 
@@ -19,11 +19,11 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            Name: <InputText id="name" @bind-Value="@SelectedCustomer.Name" />
+            Name: <InstantInput id="name" @bind-Value="@SelectedCustomer.Name" />
             <br />
             <br />
 
-            Email: <InputText id="email" @bind-Value="@SelectedCustomer.Email" />
+            Email: <InstantInput id="email" @bind-Value="@SelectedCustomer.Email" />
             <br />
             <br />
 
