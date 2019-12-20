@@ -9,18 +9,17 @@ Customers:
                AddCustomerEvent="AddCustomer"
                DeleteCustomerEvent="DeleteCustomer"> </TestComponent>
 
-@if (selectedCustomer != null)
-{
-    <br />
-    <br />
-    <span style="color:green;">Customer Selected: @selectedCustomer.Name</span>
-}
+<span style="color:@messageColor;">@displayMessage</span>
 
 @code {
 
-    List<Customer> customers = new List<Customer>();
+    private List<Customer> customers = new List<Customer>();
+    private Customer selectedCustomer;
+    private string displayMessage;
+    private string messageColor = HtmlSuccessColor;
 
-    Customer selectedCustomer;
+    private const string HtmlSuccessColor = "green";
+    private const string HtmlErrorColor = "red";
 
     private void CustomerSelected(Customer customer)
     {
@@ -29,37 +28,96 @@ Customers:
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetAllCustomersAsync();
+        try
+        {
+            await RefreshCustomersAsync();
+        }
+        catch
+        {
+            SetErrorMessage("Could not get customer data");
+        }
     }
 
     protected async Task CustomerResetting(int customerId)
     {
-        Customer originalCustomer = await CustomerService.GetCustomerAsync(customerId);
-        if (originalCustomer != null)
+        try
         {
-            customers[customers.FindIndex(x => x.CustomerId == customerId)] = originalCustomer;
-            selectedCustomer = originalCustomer;
+            Customer originalCustomer = await CustomerService.GetCustomerAsync(customerId);
+            if (originalCustomer != null)
+            {
+                customers[customers.FindIndex(x => x.CustomerId == customerId)] = originalCustomer;
+                selectedCustomer = originalCustomer;
+                SetSuccessMessage("Customer restored");
+            }
+            else
+            {
+                SetErrorMessage("Could not load existing customer");
+            }
+        }
+        catch
+        {
+            SetErrorMessage("Could not reset customer");
         }
     }
 
     protected async Task AddCustomer(Customer customer)
     {
-        int nextId = customers.Count > 0 ? customers.Select(c => c.CustomerId).Max() + 1 : 1;
-        customer.CustomerId = nextId;
-        await CustomerService.AddCustomerAsync(customer);
-        customers = await CustomerService.GetAllCustomersAsync();
+        try
+        {
+            int nextId = customers.Count > 0 ? customers.Select(c => c.CustomerId).Max() + 1 : 1;
+            customer.CustomerId = nextId;
+            await CustomerService.AddCustomerAsync(customer);
+            await RefreshCustomersAsync();
+            SetSuccessMessage("Customer added");
+        }
+        catch
+        {
+            SetErrorMessage("Could not add customer");
+        }
     }
 
     protected async Task UpdateCustomer(Customer customer)
     {
-        await CustomerService.UpdateCustomerAsync(customer);
-        customers = await CustomerService.GetAllCustomersAsync();
+        try
+        {
+            await CustomerService.UpdateCustomerAsync(customer);
+            customers = await CustomerService.GetAllCustomersAsync();
+            await RefreshCustomersAsync();
+            SetSuccessMessage("Customer updated");
+        }
+        catch
+        {
+            SetErrorMessage("Could not update customer");
+        }
     }
 
     protected async Task DeleteCustomer(int customerId)
     {
-        await CustomerService.DeleteCustomerAsync(customerId);
-        customers = await CustomerService.GetAllCustomersAsync();
+        try
+        {
+            await CustomerService.DeleteCustomerAsync(customerId);
+            await RefreshCustomersAsync();
+            selectedCustomer = customers.FirstOrDefault();
+            SetSuccessMessage("Customer deleted");
+        }
+        catch
+        {
+            SetErrorMessage("Could not delete customer");
+        }
+    }
+
+    private async Task RefreshCustomersAsync() => customers = await CustomerService.GetAllCustomersAsync();
+
+    private void SetSuccessMessage(string msg)
+    {
+        messageColor = HtmlSuccessColor;
+        displayMessage = msg;
+    }
+
+    private void SetErrorMessage(string msg)
+    {
+        messageColor = HtmlErrorColor;
+        displayMessage = msg;
     }
 
 }

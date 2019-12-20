@@ -2,7 +2,8 @@
 <select @onchange="CustomerSelected" size="4" style="width:100%">
     @foreach (var customer in @Customers)
     {
-        <option value="@customer.CustomerId">@customer.Name</option>
+        string selected = customer.CustomerId == SelectedCustomer?.CustomerId ? "selected" : null;
+        <option selected="@selected" value="@customer.CustomerId" @selected>@customer.Name</option>
     }
 </select>
 

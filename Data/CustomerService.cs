@@ -13,37 +13,23 @@ namespace BlazorWorkshop.Data
 
         public static async Task<List<Customer>> GetAllCustomersAsync()
         {
-            try
+            using (var httpClient = new HttpClient())
             {
-                using (var httpClient = new HttpClient())
-                {
-                    var uri = new Uri($"{BaseURL}api/customer");
-                    string json = await httpClient.GetStringAsync(uri);
-                    var customers = JsonConvert.DeserializeObject<List<Customer>>(json);
-                    return customers;
-                }
-            }
-            catch
-            {
-                return new List<Customer>();
+                var uri = new Uri($"{BaseURL}api/customer");
+                string json = await httpClient.GetStringAsync(uri);
+                var customers = JsonConvert.DeserializeObject<List<Customer>>(json);
+                return customers;
             }
         }
 
         public static async Task<Customer> GetCustomerAsync(int customerId)
         {
-            try
+            using (var httpClient = new HttpClient())
             {
-                using (var httpClient = new HttpClient())
-                {
-                    var uri = new Uri($"{BaseURL}api/customer/{customerId}");
-                    string json = await httpClient.GetStringAsync(uri);
-                    var customer = JsonConvert.DeserializeObject<Customer>(json);
-                    return customer;
-                }
-            }
-            catch
-            {
-                return null;
+                var uri = new Uri($"{BaseURL}api/customer/{customerId}");
+                string json = await httpClient.GetStringAsync(uri);
+                var customer = JsonConvert.DeserializeObject<Customer>(json);
+                return customer;
             }
         }
 
@@ -60,13 +46,13 @@ namespace BlazorWorkshop.Data
 
         public static async Task UpdateCustomerAsync(Customer customer)
         {
-            using(var http = new HttpClient())
+            using (var http = new HttpClient())
             {
                 var uri = new Uri($"{BaseURL}api/customer/{customer.CustomerId}");
                 string jsonBody = JsonConvert.SerializeObject(customer);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
                 HttpResponseMessage responseMessage = await http.PutAsync(uri, content);
-                if(responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+                if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     throw new Exception("Customer was not updated");
                 }
