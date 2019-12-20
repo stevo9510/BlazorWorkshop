@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorWorkshop.Controllers;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,11 @@ namespace BlazorWorkshop
         [Parameter]
         public EventCallback<int> CustomerResetEvent { get; set; }
 
+        [Parameter]
+        public EventCallback<string> AddCustomerEvent { get; set; }
+
+        protected string NewCustomerName { get; set; }
+
         protected async Task CustomerSelected(ChangeEventArgs args)
         {
             SelectedCustomer = Customers.Where(cust => cust.CustomerId.ToString() == args.Value.ToString()).First();
@@ -29,6 +35,12 @@ namespace BlazorWorkshop
         protected async Task ResetButtonClicked()
         {
             await CustomerResetEvent.InvokeAsync(SelectedCustomer.CustomerId);
+        }
+
+        protected async Task CustomerAdding()
+        {
+            await AddCustomerEvent.InvokeAsync(NewCustomerName);
+            NewCustomerName = string.Empty;
         }
     }
 }

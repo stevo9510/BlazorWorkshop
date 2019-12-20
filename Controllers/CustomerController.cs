@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,53 +10,94 @@ namespace BlazorWorkshop.Controllers
 {
     [Route("api/[controller]")]
     public class CustomerController : Controller
-    { 
+    {
+        private List<Customer> Customers;
+        private string customerDataFile = "";
+        public CustomerController()
+        {
+            LoadData();
+        }
+
         // GET api/<controller>
         [HttpGet]
         public List<Customer> Get()
         {
-            return GetAllCustomers();
+            return Customers;
         }
 
         // GET api/<controller>/{id}
         [HttpGet("{id}", Name = "Get")]
         public Customer Get(int id)
         {
-            return GetAllCustomers().Where(customer => customer.CustomerId == id).FirstOrDefault();
+            return Customers.Where(customer => customer.CustomerId == id).FirstOrDefault();
         }
 
-        private static List<Customer> GetAllCustomers() => new List<Customer>()
+        // POST: api/Customer
+        [HttpPost]
+        public void Post([FromBody] Customer customer)
+        {
+            Customers.Add(customer);
+            SaveData();
+        }
+
+        private void PopulateInitialCustomers()
+        {
+            if (Customers == null)
             {
-                new Customer
-                {
-                    CustomerId = 1,
-                    Name = "Isadora Jarr"
-                },
-                new Customer
-                {
-                    CustomerId = 2,
-                    Name = "Ben Slackin"
-                },
-                new Customer
-                {
-                    CustomerId = 3,
-                    Name = "Doo Fuss"
-                },
-                new Customer
-                {
-                    CustomerId = 4,
-                    Name = "Hugh Jass"
-                },
-                new Customer
-                {
-                    CustomerId = 5,
-                    Name = "Donatella Nawan"
-                },
-                new Customer
-                {
-                    CustomerId = 6,
-                    Name = "Pykop Andropov"
-                }
-            };
+                Customers = new List<Customer>(){
+                    new Customer
+                    {
+                        CustomerId = 1,
+                        Name = "Isadora Jarr"
+                    },
+                    new Customer
+                    {
+                        CustomerId = 2,
+                        Name = "Ben Slackin"
+                    },
+                    new Customer
+                    {
+                        CustomerId = 3,
+                        Name = "Doo Fuss"
+                    },
+                    new Customer
+                    {
+                        CustomerId = 4,
+                        Name = "Hugh Jass"
+                    },
+                    new Customer
+                    {
+                        CustomerId = 5,
+                        Name = "Donatella Nawan"
+                    },
+                    new Customer
+                    {
+                        CustomerId = 6,
+                        Name = "Pykop Andropov"
+                    }
+                };
+            }
+        }
+
+        private void LoadData()
+        {
+            customerDataFile = Environment.CurrentDirectory + @"\customers.json";
+            if (!System.IO.File.Exists(customerDataFile))
+            {
+                PopulateInitialCustomers();
+                SaveData();
+            }
+            else
+            {
+                var json = System.IO.File.ReadAllText(customerDataFile);
+                Customers = JsonConvert.DeserializeObject<List<Customer>>(json);
+            }
+        }
+
+        private void SaveData()
+        {
+            var json = JsonConvert.SerializeObject(Customers);
+            System.IO.File.WriteAllText(customerDataFile, json);
+        }
     }
 }

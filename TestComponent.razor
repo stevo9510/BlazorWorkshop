@@ -6,6 +6,11 @@
     }
 </select>
 
+<br />
+Add Customer: <input @bind="@NewCustomerName" />
+<button @onclick="CustomerAdding">Add</button>
+<br />
+
 @if (SelectedCustomer != null)
 {
     <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />

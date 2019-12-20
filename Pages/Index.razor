@@ -1,7 +1,11 @@
 ﻿@page "/"
 @using BlazorWorkshop.Data;
 Customers:
-<TestComponent Customers="Customers" SelectedCustomer="SelectedCustomer" CustomerResetEvent="CustomerResetting" CustomerSelectEvent="CustomerSelected"> </TestComponent>
+<TestComponent Customers="Customers" 
+            SelectedCustomer="SelectedCustomer" 
+            CustomerResetEvent="CustomerResetting" 
+            CustomerSelectEvent="CustomerSelected"
+            AddCustomerEvent="AddCustomer"> </TestComponent>
 
 @if (SelectedCustomer != null)
 {
@@ -33,6 +37,17 @@ Customers:
         {
             Customers[Customers.FindIndex(x => x.CustomerId == customerId)] = originalCustomer;
             SelectedCustomer = originalCustomer;
+        }
+    }
+
+    protected async Task AddCustomer(string customerName)
+    {
+        if (!string.IsNullOrWhiteSpace(customerName))
+        {
+            int nextId = Customers.Count > 0 ? Customers.Select(c => c.CustomerId).Max() + 1 : 1; 
+            var newCustomer = new Customer() { CustomerId = nextId, Name = customerName };
+            await CustomerService.AddCustomer(newCustomer);
+            Customers = await CustomerService.GetAllCustomersAsync();
         }
     }
 }
