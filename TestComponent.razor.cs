@@ -7,7 +7,6 @@ namespace BlazorWorkshop
 {
     public class TestComponentCode : ComponentBase
     {
-        protected Customer SelectedCustomer;
 
         [Parameter]
         public List<Customer> Customers { get; set; } = new List<Customer>();
@@ -15,10 +14,21 @@ namespace BlazorWorkshop
         [Parameter]
         public EventCallback<Customer> CustomerSelectEvent { get; set; }
 
+        [Parameter]
+        public Customer SelectedCustomer { get; set; }
+
+        [Parameter]
+        public EventCallback<int> CustomerResetEvent { get; set; }
+
         protected async Task CustomerSelected(ChangeEventArgs args)
         {
             SelectedCustomer = Customers.Where(cust => cust.CustomerId.ToString() == args.Value.ToString()).First();
             await CustomerSelectEvent.InvokeAsync(SelectedCustomer);
+        }
+
+        protected async Task ResetButtonClicked()
+        {
+            await CustomerResetEvent.InvokeAsync(SelectedCustomer.CustomerId);
         }
     }
 }

@@ -9,4 +9,5 @@
 @if (SelectedCustomer != null)
 {
     <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />
+    <button @onclick="ResetButtonClicked">Reset</button>
 }
