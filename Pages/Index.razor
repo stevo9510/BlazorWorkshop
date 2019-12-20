@@ -42,15 +42,12 @@ Customers:
         }
     }
 
-    protected async Task AddCustomer(string customerName)
+    protected async Task AddCustomer(Customer customer)
     {
-        if (!string.IsNullOrWhiteSpace(customerName))
-        {
-            int nextId = customers.Count > 0 ? customers.Select(c => c.CustomerId).Max() + 1 : 1;
-            var newCustomer = new Customer() { CustomerId = nextId, Name = customerName };
-            await CustomerService.AddCustomerAsync(newCustomer);
-            customers = await CustomerService.GetAllCustomersAsync();
-        }
+        int nextId = customers.Count > 0 ? customers.Select(c => c.CustomerId).Max() + 1 : 1;
+        customer.CustomerId = nextId;
+        await CustomerService.AddCustomerAsync(customer);
+        customers = await CustomerService.GetAllCustomersAsync();
     }
 
     protected async Task UpdateCustomer(Customer customer)

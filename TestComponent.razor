@@ -6,18 +6,31 @@
     }
 </select>
 
+<button @onclick="AddButtonClicked">Add Customer</button>
+
 <br />
-Add Customer:
-<input @bind="@NewCustomerName" />
-<button @onclick="AddButtonClicked">Add</button>
 <br />
 
 @if (SelectedCustomer != null)
 {
     <div style="background-color:lightgray;padding:1vw;">
-        <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />
-        <button @onclick="UpdateButtonClicked">Update</button>
-        <button @onclick="ResetButtonClicked">Reset</button>
-        <button @onclick="DeleteButtonClicked">Delete</button>
+        <EditForm Model="@SelectedCustomer" OnValidSubmit="@UpdateButtonClicked">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            Name: <InputText id="name" @bind-Value="@SelectedCustomer.Name" />
+            <br />
+            <br />
+
+            Email: <InputText id="email" @bind-Value="@SelectedCustomer.Email" />
+            <br />
+            <br />
+
+            <button type="submit">Save</button>
+            <button type="button" @onclick="ResetButtonClicked">Reset</button>
+            <button type="button" @onclick="DeleteButtonClicked">Delete</button>
+        </EditForm>
     </div>
 }
+
+

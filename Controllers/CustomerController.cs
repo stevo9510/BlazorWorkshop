@@ -26,7 +26,7 @@ namespace BlazorWorkshop.Controllers
         }
 
         // GET api/<controller>/{id}
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public Customer Get(int id)
         {
             return Customers.Where(customer => customer.CustomerId == id).FirstOrDefault();
@@ -93,32 +93,39 @@ namespace BlazorWorkshop.Controllers
                     new Customer
                     {
                         CustomerId = 1,
-                        Name = "Isadora Jarr"
+                        Name = "Isadora Jarr",
+                        Email = "isadora@jarr.com"
+
                     },
                     new Customer
                     {
                         CustomerId = 2,
-                        Name = "Ben Slackin"
+                        Name = "Ben Slackin",
+                        Email = "ben@slackin.com",
                     },
                     new Customer
                     {
                         CustomerId = 3,
-                        Name = "Doo Fuss"
+                        Name = "Doo Fuss",
+                        Email = "doo@fuss.com",
                     },
                     new Customer
                     {
                         CustomerId = 4,
-                        Name = "Hugh Jass"
+                        Name = "Hugh Jass",
+                        Email = "hugh@jass.com",
                     },
                     new Customer
                     {
                         CustomerId = 5,
-                        Name = "Donatella Nawan"
+                        Name = "Donatella Nawan",
+                        Email = "donatella@nawan.com"
                     },
                     new Customer
                     {
                         CustomerId = 6,
-                        Name = "Pykop Andropov"
+                        Name = "Pykop Andropov",
+                        Email = "pykop@andropov.com"
                     }
                 };
             }
