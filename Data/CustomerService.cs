@@ -15,7 +15,7 @@ namespace BlazorWorkshop.Data
         {
             try
             {
-                using(var httpClient = new HttpClient())
+                using (var httpClient = new HttpClient())
                 {
                     var uri = new Uri($"{BaseURL}api/customer");
                     string json = await httpClient.GetStringAsync(uri);
@@ -47,14 +47,42 @@ namespace BlazorWorkshop.Data
             }
         }
 
-        public static async Task AddCustomer(Customer customer)
+        public static async Task AddCustomerAsync(Customer customer)
         {
-            using(var http = new HttpClient())
+            using (var http = new HttpClient())
             {
                 var uri = new Uri($"{BaseURL}api/customer");
                 string jsonBody = JsonConvert.SerializeObject(customer);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
                 await http.PostAsync(uri, content);
+            }
+        }
+
+        public static async Task UpdateCustomerAsync(Customer customer)
+        {
+            using(var http = new HttpClient())
+            {
+                var uri = new Uri($"{BaseURL}api/customer/{customer.CustomerId}");
+                string jsonBody = JsonConvert.SerializeObject(customer);
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+                HttpResponseMessage responseMessage = await http.PutAsync(uri, content);
+                if(responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    throw new Exception("Customer was not updated");
+                }
+            }
+        }
+
+        public static async Task DeleteCustomerAsync(int customerId)
+        {
+            using (var http = new HttpClient())
+            {
+                var uri = new Uri($"{BaseURL}api/customer/{customerId}");
+                HttpResponseMessage responseMessage = await http.DeleteAsync(uri);
+                if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    throw new Exception("Customer was not deleted");
+                }
             }
         }
     }

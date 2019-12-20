@@ -40,6 +40,51 @@ namespace BlazorWorkshop.Controllers
             SaveData();
         }
 
+        // PUT: api/Customer/{id}
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] Customer customer)
+        {
+            int indexOfCustomer = Customers.FindIndex(c => c.CustomerId == id);
+            if (indexOfCustomer > -1)
+            {
+                Customers[indexOfCustomer] = customer;
+                SaveData();
+            }
+        }
+
+        // DELETE: api/Customer/{id}
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            var customerToRemove = Customers.Where(c => c.CustomerId == id).FirstOrDefault();
+            if(customerToRemove != null)
+            {
+                Customers.Remove(customerToRemove);
+                SaveData();
+            }
+        }
+
+        private void LoadData()
+        {
+            customerDataFile = Environment.CurrentDirectory + @"\customers.json";
+            if (!System.IO.File.Exists(customerDataFile))
+            {
+                PopulateInitialCustomers();
+                SaveData();
+            }
+            else
+            {
+                var json = System.IO.File.ReadAllText(customerDataFile);
+                Customers = JsonConvert.DeserializeObject<List<Customer>>(json);
+            }
+        }
+
+        private void SaveData()
+        {
+            var json = JsonConvert.SerializeObject(Customers);
+            System.IO.File.WriteAllText(customerDataFile, json);
+        }
+
         private void PopulateInitialCustomers()
         {
             if (Customers == null)
@@ -79,25 +124,5 @@ namespace BlazorWorkshop.Controllers
             }
         }
 
-        private void LoadData()
-        {
-            customerDataFile = Environment.CurrentDirectory + @"\customers.json";
-            if (!System.IO.File.Exists(customerDataFile))
-            {
-                PopulateInitialCustomers();
-                SaveData();
-            }
-            else
-            {
-                var json = System.IO.File.ReadAllText(customerDataFile);
-                Customers = JsonConvert.DeserializeObject<List<Customer>>(json);
-            }
-        }
-
-        private void SaveData()
-        {
-            var json = JsonConvert.SerializeObject(Customers);
-            System.IO.File.WriteAllText(customerDataFile, json);
-        }
     }
 }

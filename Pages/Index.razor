@@ -1,42 +1,44 @@
 ﻿@page "/"
 @using BlazorWorkshop.Data;
 Customers:
-<TestComponent Customers="Customers" 
-            SelectedCustomer="SelectedCustomer" 
-            CustomerResetEvent="CustomerResetting" 
-            CustomerSelectEvent="CustomerSelected"
-            AddCustomerEvent="AddCustomer"> </TestComponent>
+<TestComponent Customers="customers"
+               SelectedCustomer="selectedCustomer"
+               CustomerResetEvent="CustomerResetting"
+               CustomerSelectEvent="CustomerSelected"
+               UpdateCustomerEvent="UpdateCustomer"
+               AddCustomerEvent="AddCustomer"
+               DeleteCustomerEvent="DeleteCustomer"> </TestComponent>
 
-@if (SelectedCustomer != null)
+@if (selectedCustomer != null)
 {
     <br />
     <br />
-    <span style="color:green;">Customer Selected: @SelectedCustomer.Name</span>
+    <span style="color:green;">Customer Selected: @selectedCustomer.Name</span>
 }
 
 @code {
 
-    List<Customer> Customers = new List<Customer>();
+    List<Customer> customers = new List<Customer>();
 
-    Customer SelectedCustomer;
+    Customer selectedCustomer;
 
     private void CustomerSelected(Customer customer)
     {
-        SelectedCustomer = customer;
+        selectedCustomer = customer;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        Customers = await CustomerService.GetAllCustomersAsync();
+        customers = await CustomerService.GetAllCustomersAsync();
     }
 
     protected async Task CustomerResetting(int customerId)
     {
         Customer originalCustomer = await CustomerService.GetCustomerAsync(customerId);
-        if(originalCustomer != null)
+        if (originalCustomer != null)
         {
-            Customers[Customers.FindIndex(x => x.CustomerId == customerId)] = originalCustomer;
-            SelectedCustomer = originalCustomer;
+            customers[customers.FindIndex(x => x.CustomerId == customerId)] = originalCustomer;
+            selectedCustomer = originalCustomer;
         }
     }
 
@@ -44,10 +46,23 @@ Customers:
     {
         if (!string.IsNullOrWhiteSpace(customerName))
         {
-            int nextId = Customers.Count > 0 ? Customers.Select(c => c.CustomerId).Max() + 1 : 1; 
+            int nextId = customers.Count > 0 ? customers.Select(c => c.CustomerId).Max() + 1 : 1;
             var newCustomer = new Customer() { CustomerId = nextId, Name = customerName };
-            await CustomerService.AddCustomer(newCustomer);
-            Customers = await CustomerService.GetAllCustomersAsync();
+            await CustomerService.AddCustomerAsync(newCustomer);
+            customers = await CustomerService.GetAllCustomersAsync();
         }
     }
+
+    protected async Task UpdateCustomer(Customer customer)
+    {
+        await CustomerService.UpdateCustomerAsync(customer);
+        customers = await CustomerService.GetAllCustomersAsync();
+    }
+
+    protected async Task DeleteCustomer(int customerId)
+    {
+        await CustomerService.DeleteCustomerAsync(customerId);
+        customers = await CustomerService.GetAllCustomersAsync();
+    }
+
 }

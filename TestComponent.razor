@@ -7,12 +7,17 @@
 </select>
 
 <br />
-Add Customer: <input @bind="@NewCustomerName" />
-<button @onclick="CustomerAdding">Add</button>
+Add Customer:
+<input @bind="@NewCustomerName" />
+<button @onclick="AddButtonClicked">Add</button>
 <br />
 
 @if (SelectedCustomer != null)
 {
-    <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />
-    <button @onclick="ResetButtonClicked">Reset</button>
+    <div style="background-color:lightgray;padding:1vw;">
+        <input @bind="@SelectedCustomer.Name" @bind:event="oninput" />
+        <button @onclick="UpdateButtonClicked">Update</button>
+        <button @onclick="ResetButtonClicked">Reset</button>
+        <button @onclick="DeleteButtonClicked">Delete</button>
+    </div>
 }
